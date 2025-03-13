@@ -1,153 +1,671 @@
 <!DOCTYPE html>
 {% load static %}
-<html>
+<html lang="en">
 <head>
+  <title>Customer Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="{% static "assets/AT-pro-logo.png" %}"/>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" type="text/css" href="{% static "fontawesome-free/css/all.min.css" %}">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
+  <style>
+    :root {
+      --primary-color: #4e73df;
+      --secondary-color: #1cc88a;
+      --warning-color: #f6c23e;
+      --danger-color: #e74a3b;
+      --light-bg: #f8f9fc;
+      --dark-bg: #222;
+      --dark-sidebar: #2d2d2d;
+      --dark-card: #2e2e2e;
+      --light-text: #f8f9fc;
+      --dark-text: #5a5c69;
+      --sidebar-width: 250px;
+      --sidebar-collapsed-width: 70px;
+      --transition-speed: 0.3s;
 
-	<title>Customer dashboard</title>
-	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
-	<link rel="icon" type="image/png" href="{% static "assets/AT-pro-logo.png" %}"/>
-
-	<!-- Import lib -->
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
-	<link rel="stylesheet" type="text/css" href="{% static "fontawesome-free/css/all.min.css" %}">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-	<!-- End import lib -->
-
-	<link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      overflow-x: hidden;
+      background-color: var(--light-bg);
+      color: #444;
+    }
+    
+    body.dark-theme {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+    }
+    
+    /* Wrapper */
+    .dashboard-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: white;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+      z-index: 1000;
+      transition: width var(--transition-speed), transform var(--transition-speed);
+    }
+    
+    body.dark-theme .sidebar {
+      background: var(--dark-sidebar);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+    }
+    
+    body.sidebar-collapsed .sidebar {
+      width: var(--sidebar-collapsed-width);
+    }
+    
+    .sidebar-brand {
+      height: 70px;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      gap: 10px;
+    }
+    
+    body.dark-theme .sidebar-brand {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-brand h3 {
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      transition: opacity var(--transition-speed);
+    }
+    
+    body.sidebar-collapsed .sidebar-brand h3 {
+      opacity: 0;
+    }
+    
+    .sidebar-nav {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      overflow-y: auto;
+      height: calc(100% - 70px);
+    }
+    
+    .sidebar-nav-item {
+      margin: 0;
+      padding: 0;
+    }
+    
+    .sidebar-nav-link {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: var(--dark-text);
+      text-decoration: none;
+      transition: all var(--transition-speed);
+      white-space: nowrap;
+    }
+    
+    body.dark-theme .sidebar-nav-link {
+      color: #ccc;
+    }
+    
+    .sidebar-nav-link:hover {
+      background: rgba(78, 115, 223, 0.1);
+      color: var(--primary-color);
+    }
+    
+    body.dark-theme .sidebar-nav-link:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+    
+    .sidebar-nav-link .nav-icon {
+      margin-right: 1rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .sidebar-nav-link .nav-text {
+      opacity: 1;
+      transition: opacity var(--transition-speed);
+    }
+    
+    body.sidebar-collapsed .sidebar-nav-link .nav-text {
+      opacity: 0;
+    }
+    
+    /* Topbar */
+    .topbar {
+      width: calc(100% - var(--sidebar-width));
+      height: 70px;
+      position: fixed;
+      right: 0;
+      top: 0;
+      background-color: white;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+      z-index: 999;
+      transition: width var(--transition-speed), background-color var(--transition-speed);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+    }
+    
+    body.dark-theme .topbar {
+      background-color: var(--dark-sidebar);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+    }
+    
+    body.sidebar-collapsed .topbar {
+      width: calc(100% - var(--sidebar-collapsed-width));
+    }
+    
+    .hamburger {
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: var(--dark-text);
+    }
+    
+    body.dark-theme .hamburger {
+      color: var(--light-text);
+    }
+    
+    .search-form {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 2rem;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 1rem 0.5rem 2.5rem;
+      border-radius: 100px;
+      border: 1px solid #e3e6f0;
+      background-color: #f8f9fc;
+      transition: all var(--transition-speed);
+    }
+    
+    body.dark-theme .search-input {
+      background-color: var(--dark-card);
+      border-color: #444;
+      color: var(--light-text);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #858796;
+    }
+    
+    .topbar-right {
+      display: flex;
+      align-items: center;
+    }
+    
+    .theme-toggle {
+      margin-right: 1.5rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #858796;
+    }
+    
+    .user-dropdown {
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .user-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #eaeaea;
+    }
+    
+    body.dark-theme .user-img {
+      border-color: #444;
+    }
+    
+    .user-dropdown-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 0.5rem;
+      min-width: 200px;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+      display: none;
+      padding: 0.5rem 0;
+      z-index: 1000;
+    }
+    
+    body.dark-theme .user-dropdown-menu {
+      background: var(--dark-card);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.15);
+    }
+    
+    .user-dropdown-menu.show {
+      display: block;
+    }
+    
+    .dropdown-item {
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      color: var(--dark-text);
+      text-decoration: none;
+    }
+    
+    body.dark-theme .dropdown-item {
+      color: var(--light-text);
+    }
+    
+    .dropdown-item:hover {
+      background-color: #f8f9fc;
+      color: var(--primary-color);
+    }
+    
+    body.dark-theme .dropdown-item:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: white;
+    }
+    
+    .dropdown-item i {
+      width: 20px;
+      margin-right: 0.75rem;
+      text-align: center;
+    }
+    
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      margin-top: 70px;
+      padding: 2rem;
+      min-height: calc(100vh - 70px);
+      transition: margin-left var(--transition-speed);
+      width: calc(100% - var(--sidebar-width));
+    }
+    
+    body.sidebar-collapsed .main-content {
+      margin-left: var(--sidebar-collapsed-width);
+      width: calc(100% - var(--sidebar-collapsed-width));
+    }
+    
+    /* Dashboard Cards */
+    .dashboard-card {
+      border: none;
+      border-radius: 0.75rem;
+      transition: all var(--transition-speed);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+      height: 100%;
+    }
+    
+    body.dark-theme .dashboard-card {
+      background-color: var(--dark-card);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.2);
+    }
+    
+    .card-primary {
+      border-left: 0.25rem solid var(--primary-color);
+    }
+    
+    .card-warning {
+      border-left: 0.25rem solid var(--warning-color);
+    }
+    
+    .card-success {
+      border-left: 0.25rem solid var(--secondary-color);
+    }
+    
+    .card-danger {
+      border-left: 0.25rem solid var(--danger-color);
+    }
+    
+    .stat-icon {
+      font-size: 2rem;
+    }
+    
+    .icon-primary { color: var(--primary-color); }
+    .icon-warning { color: var(--warning-color); }
+    .icon-success { color: var(--secondary-color); }
+    .icon-danger { color: var(--danger-color); }
+    
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+      color: #858796;
+      font-size: 0.875rem;
+      margin-bottom: 0;
+    }
+    
+    body.dark-theme .stat-label {
+      color: #bbb;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 992px) {
+      body:not(.mobile-open) {
+        overflow-x: hidden;
+      }
+      
+      body:not(.mobile-open) .sidebar {
+        width: var(--sidebar-collapsed-width);
+      }
+      
+      body:not(.mobile-open) .sidebar-brand h3,
+      body:not(.mobile-open) .sidebar-nav-link .nav-text {
+        opacity: 0;
+      }
+      
+      body:not(.mobile-open) .topbar {
+        width: calc(100% - var(--sidebar-collapsed-width));
+      }
+      
+      body:not(.mobile-open) .main-content {
+        margin-left: var(--sidebar-collapsed-width);
+        width: calc(100% - var(--sidebar-collapsed-width));
+      }
+      
+      .search-form {
+        max-width: 200px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      body:not(.mobile-open) .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      body.mobile-open .sidebar {
+        transform: translateX(0);
+        width: var(--sidebar-width);
+      }
+      
+      body.mobile-open .sidebar-brand h3,
+      body.mobile-open .sidebar-nav-link .nav-text {
+        opacity: 1;
+      }
+      
+      body:not(.mobile-open) .topbar {
+        width: 100%;
+      }
+      
+      body:not(.mobile-open) .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+      }
+      
+      .search-form {
+        display: none;
+      }
+    }
+  </style>
+  </style>
+  
+  <!-- Style tag would be here -->
 </head>
-<body class="overlay-scrollbar">
-	<!-- navbar -->
-	<div class="navbar">
-		<!-- nav left -->
-		<ul class="navbar-nav">
-			<li class="nav-item">
-				<a class="nav-link">
-					<i class="fas fa-bars" onclick="collapseSidebar()"></i>
-				</a>
-			</li>
-			<li class="nav-item">
-			<a style="text-decoration:none;"href="/customer-dashboard"><h3>Vehicle Service Management</h3></a>
-			</li>
-		</ul>
-		<!-- end nav left -->
-		<!-- form -->
-		<form class="navbar-search">
-			<input type="text" name="Search" class="navbar-search-input" placeholder="What you looking for...">
-			<i class="fas fa-search"></i>
-		</form>
-		<!-- end form -->
-		<!-- nav right -->
-		<ul class="navbar-nav nav-right">
-			<li class="nav-item mode">
-				<a class="nav-link" href="#" onclick="switchTheme()">
-					<i class="fas fa-moon dark-icon"></i>
-					<i class="fas fa-sun light-icon"></i>
-				</a>
-			</li>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-brand">
+        <div class="hamburger sidebar-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+        <h3>VSMS</h3>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="/customer-dashboard" class="sidebar-nav-link">
+            <div class="nav-icon">
+              <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="/customer-request" class="sidebar-nav-link">
+            <div class="nav-icon">
+              <i class="fas fa-spinner"></i>
+            </div>
+            <span class="nav-text">Request</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="/customer-invoice" class="sidebar-nav-link">
+            <div class="nav-icon">
+              <i class="fas fa-rupee-sign"></i>
+            </div>
+            <span class="nav-text">Invoice</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="/customer-feedback" class="sidebar-nav-link">
+            <div class="nav-icon">
+              <i class="fas fa-comments"></i>
+            </div>
+            <span class="nav-text">Feedback</span>
+          </a>
+        </li>
+      </ul>
+    </div>
 
-			<li class="nav-item avt-wrapper">
-				<div class="avt dropdown">
-					<img src="{% static  customer.profile_pic.url %} " alt="User image" class="dropdown-toggle" data-toggle="user-menu">
-					<ul id="user-menu" class="dropdown-menu">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="d-flex align-items-center">
+        <div class="hamburger d-md-none mobile-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+        <form class="search-form">
+          <input type="text" class="search-input" placeholder="Search for...">
+          <i class="fas fa-search search-icon"></i>
+        </form>
+      </div>
+      <div class="topbar-right">
+        <div class="theme-toggle">
+          <i class="fas fa-moon"></i>
+        </div>
+        <div class="user-dropdown">
+          <img src="{% static customer.profile_pic.url %}" alt="User" class="user-img">
+          <div class="user-dropdown-menu px-3" id="userDropdownMenu">
+            <a href="/customer-profile" class="dropdown-item">
+              <i class="fas fa-user-tie"></i>
+              <span>Profile</span>
+            </a>
+            <a href="/logout" class="dropdown-item">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
-						<li  class="dropdown-menu-item">
-							<a href="/customer-profile" class="dropdown-menu-link">
-								<div>
-									<i class="fas fa-user-tie"></i>
-								</div>
-								<span>Profile</span>
-							</a>
-						</li>
+    <!-- Main Content -->
+    <div class="main-content">
+      {% block content %}
+      <div class="container-fluid px-0">
+        <!-- Dashboard Header -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+          <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        </div>
 
-						<li  class="dropdown-menu-item">
-							<a href="/logout" class="dropdown-menu-link">
-								<div>
-									<i class="fas fa-sign-out-alt"></i>
-								</div>
-								<span>Logout</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</li>
-		</ul>
-		<!-- end nav right -->
-	</div>
-	<!-- end navbar -->
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+          <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-primary">
+              <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                  <div class="stat-icon icon-primary mb-3">
+                    <i class="fas fa-tasks"></i>
+                  </div>
+                  <div class="stat-value">{{new_request_made}}</div>
+                  <div class="stat-label">New Request Made</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-warning">
+              <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                  <div class="stat-icon icon-warning mb-3">
+                    <i class="fas fa-spinner"></i>
+                  </div>
+                  <div class="stat-value">{{work_in_progress}}</div>
+                  <div class="stat-label">Vehicle Repair In Progress</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-success">
+              <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                  <div class="stat-icon icon-success mb-3">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+                  <div class="stat-value">{{work_completed}}</div>
+                  <div class="stat-label">Vehicle Repaired</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card card-danger">
+              <div class="card-body">
+                <div class="d-flex flex-column align-items-center text-center p-3">
+                  <div class="stat-icon icon-danger mb-3">
+                    <i class="fas fa-rupee-sign"></i>
+                  </div>
+                  <div class="stat-value">{{bill}}</div>
+                  <div class="stat-label">Total Bill</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endblock content %}
+    </div>
+  </div>
 
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+  
+  <!-- Custom Scripts -->
+  <script>
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('darkMode');
+    
+    const isMobile = window.innerWidth <= 576;
+    
+    if (savedTheme === 'true' || (savedTheme === null && prefersDarkMode)) {
+      document.body.classList.add('dark-theme');
+    }
+    
+    if (isMobile) {
+      document.body.classList.remove('sidebar-collapsed');
+    } else {
+      document.body.classList.add('sidebar-collapsed');
+    }
 
+    document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+      if (window.innerWidth > 576) {
+        document.body.classList.toggle('sidebar-collapsed');
+      }
+    });
+    
+    document.querySelector('.mobile-toggle').addEventListener('click', function() {
+      if (window.innerWidth <= 576) {
+        document.body.classList.toggle('mobile-open');
+      }
+    });
 
-
-
-	<!-- sidebar -->
-	<div class="sidebar">
-		<ul class="sidebar-nav">
-
-			<li class="sidebar-nav-item">
-				<a href="/customer-dashboard" class="sidebar-nav-link">
-					<div>
-						<i class="fas fa-tachometer-alt"></i>
-					</div>
-					<span>
-						Dashboard
-					</span>
-				</a>
-			</li>
-
-			<li  class="sidebar-nav-item">
-				<a href="/customer-request" class="sidebar-nav-link">
-					<div>
-						<i class="fas fa-spinner"></i>
-					</div>
-					<span>Request</span>
-				</a>
-			</li>
-
-			<li  class="sidebar-nav-item">
-				<a href="/customer-invoice" class="sidebar-nav-link">
-					<div>
-						<i class="fas fa-rupee-sign"></i>
-					</div>
-					<span>Invoice</span>
-				</a>
-			</li>
-
-			<li  class="sidebar-nav-item">
-				<a href="/customer-feedback" class="sidebar-nav-link">
-					<div>
-					<i class="fas fa-comments"></i>
-					</div>
-					<span>FeedBack</span>
-				</a>
-			</li>
-
-		</ul>
-	</div>
-	<!-- end sidebar -->
-
-
-
-
-<div>
-
-	<!--content start-->
-	<div class="content">
-
-		{% block content %}
-
-		{% endblock content %}
-	</div>
-	<!--content end-->
-</div>
-
-
-
-
-
-
-	<!-- import script -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-	<script src="{% static "index.js" %}"></script>
-	<!-- end import script -->
+    document.querySelector('.theme-toggle').addEventListener('click', function() {
+      document.body.classList.toggle('dark-theme');
+      const isDarkMode = document.body.classList.contains('dark-theme');
+      localStorage.setItem('darkMode', isDarkMode);
+      
+      const themeIcon = this.querySelector('i');
+      if (isDarkMode) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+      }
+    });
+    
+    document.querySelector('.user-dropdown').addEventListener('click', function(event) {
+      event.stopPropagation();
+      document.getElementById('userDropdownMenu').classList.toggle('show');
+    });
+    
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('userDropdownMenu');
+      if (dropdown && dropdown.classList.contains('show')) {
+        dropdown.classList.remove('show');
+      }
+    });
+    
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 576) {
+        document.body.classList.remove('mobile-open');
+      }
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const isDarkMode = document.body.classList.contains('dark-theme');
+      const themeIcon = document.querySelector('.theme-toggle i');
+      
+      if (isDarkMode) {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+      }
+    });
+  </script>
 </body>
 </html>

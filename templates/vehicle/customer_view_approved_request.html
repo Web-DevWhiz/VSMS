@@ -1,52 +1,48 @@
 {% extends 'vehicle/customerbase.html' %}
 {% block content %}
 
-	<!-- main content -->
-	<div class="wrapper">
+<!-- Main Content -->
+<div class="container mt-4">
 
-<!-- ****** table  start ********** -->
-		<div class="row">
-			<div class="col-12 col-m-12 col-sm-12">
-				<div class="card">
-					<div class="card-header">
-						<h3 style="color:red; text-align:center" >Approved Request
-						</h3>
+    <!-- Card Wrapper -->
+    <div class="card shadow">
+        <div class="card-header bg-success text-white text-center">
+            <h3>Approved Requests</h3>
+        </div>
 
-					</div>
-					<div class="card-content">
-						<table>
-							<thead>
-                <tr>
-                  <th>Vehicle Name</th>
-                  <th>Category</th>
-                  <th>Vehicle Number</th>
-                  <th>Problem Description</th>
-                  <th>Enquiry Date</th>
-                  <th>Status</th>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Vehicle Name</th>
+                            <th>Category</th>
+                            <th>Vehicle Number</th>
+                            <th>Problem Description</th>
+                            <th>Enquiry Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enq in enquiries %}
+                        <tr>
+                            <td>{{ enq.vehicle_name }}</td>
+                            <td>{{ enq.category }}</td>
+                            <td>{{ enq.vehicle_no }}</td>
+                            <td>{{ enq.problem_description }}</td>
+                            <td>{{ enq.date }}</td>
+                            <td>
+                                <span class="badge bg-success">Approved</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-                </tr>
-							</thead>
-							<tbody>
-                {% for enq in enquiries %}
-                <tr>
-                  <td>{{enq.vehicle_name}}</td>
-                  <td>{{enq.category}}</td>
-                  <td>{{enq.vehicle_no}}</td>
-                  <td>{{enq.problem_description}}</td>
-                  <td>{{enq.date}}</td>
-                  <td>{{enq.status}}</td>
-                  
-                  </tr>
-                {% endfor %}
+</div>
+<!-- End Main Content -->
 
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-<!-- ****** table start ********** -->
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-	</div>
-	<!-- end main content -->
 {% endblock content %}

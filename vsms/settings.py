@@ -80,8 +80,12 @@ WSGI_APPLICATION = 'vsms.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'defaultdb',         # Database name
+        'USER': 'avnadmin',              # Database user
+        'PASSWORD': 'AVNS_9Emtjyop76IDJvGLonw',          # Database password
+        'HOST': 'mysql-260cd71d-appx102-0035.h.aivencloud.com',                  # Database host (default: localhost)
+        'PORT': '13360',
     }
 }
 

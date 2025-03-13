@@ -16,7 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from vehicle import views
+from django.shortcuts import redirect
+from django.contrib.auth import login
 from django.contrib.auth.views import LoginView,LogoutView
+
+class CustomLoginView(LoginView):
+    user_type = None 
+
+    def form_valid(self, form):
+        user = form.get_user()
+        login(self.request, user)
+
+        if self.user_type == 'customer' and not user.is_staff:
+            return redirect('customer-dashboard') 
+        elif self.user_type == 'mechanic' and not user.is_staff:
+            return redirect('mechanic-dashboard') 
+        elif self.user_type == 'admin' and user.is_staff:
+            return redirect('admin-dashboard')
+        else:
+            return redirect('')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,10 +48,9 @@ urlpatterns = [
     path('customersignup', views.customer_signup_view,name='customersignup'),
     path('mechanicsignup', views.mechanic_signup_view,name='mechanicsignup'),
 
-    path('customerlogin', LoginView.as_view(template_name='vehicle/customerlogin.html'),name='customerlogin'),
-    path('mechaniclogin', LoginView.as_view(template_name='vehicle/mechaniclogin.html'),name='mechaniclogin'),
-    path('adminlogin', LoginView.as_view(template_name='vehicle/adminlogin.html'),name='adminlogin'),
-
+    path('customerlogin', CustomLoginView.as_view(template_name='vehicle/customerlogin.html', user_type='customer'), name='customerlogin'),
+    path('mechaniclogin', CustomLoginView.as_view(template_name='vehicle/mechaniclogin.html', user_type='mechanic'), name='mechaniclogin'),
+    path('adminlogin', CustomLoginView.as_view(template_name='vehicle/adminlogin.html', user_type='admin'), name='adminlogin'),
 
 
     path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
