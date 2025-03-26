@@ -36,7 +36,7 @@ def adminclick_view(request):
 def customer_signup_view(request):
     userForm=forms.CustomerUserForm()
     customerForm=forms.CustomerForm()
-    mydict={'userForm':userForm,'customerForm':customerForm}
+    mydict={'userForm': userForm,'customerForm': customerForm}
     if request.method=='POST':
         userForm=forms.CustomerUserForm(request.POST)
         customerForm=forms.CustomerForm(request.POST,request.FILES)

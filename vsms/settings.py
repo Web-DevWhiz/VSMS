@@ -88,6 +88,7 @@ DATABASES = {
         'PORT': '13360',
     }
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Password validation

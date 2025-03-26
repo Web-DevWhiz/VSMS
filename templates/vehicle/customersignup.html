@@ -140,11 +140,19 @@
                     <input type="file" id="profile-pic" name="{{ customerForm.profile_pic.html_name }}" accept="image/*" hidden>
                 </div>
 
+                <label for="first_name">First Name</label>
                 {% render_field userForm.first_name class="form-control mb-3" placeholder="First Name" required=True %}
+                <label for="last_name">Last Name</label>
                 {% render_field userForm.last_name class="form-control mb-3" placeholder="Last Name" required=True %}
+                <label for="username">Userame</label>
                 {% render_field userForm.username class="form-control mb-3" placeholder="Email" type="email" required=True %}
+                <label for="fpassword">Password</label>
                 {% render_field userForm.password class="form-control mb-3" placeholder="Password" type="password" required=True %}
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" class="form-control mb-3" placeholder="Confirm Password" required>
+                <label for="address">Address</label>
                 {% render_field customerForm.address class="form-control mb-3" placeholder="Address" required=True %}
+                <label for="mobile">Mobile</label>
                 {% render_field customerForm.mobile class="form-control mb-3" placeholder="Mobile" required=True pattern="\d{10}" title="Enter a valid 10-digit mobile number" %}
                 <button type="submit" class="btn-submit">Create Account</button>
             </form>
@@ -169,20 +177,28 @@
         });
 
         document.getElementById("signupForm").addEventListener("submit", function (event) {
-            const password = document.querySelector("input[name='{{ userForm.password.html_name }}']").value;
-            if (password.length < 6) {
-                alert("Password must be at least 6 characters long.");
-                event.preventDefault();
-                return;
-            }
+        const password = document.querySelector("input[name='{{ userForm.password.html_name }}']").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
 
-            const profilePicInput = document.getElementById("profile-pic");
+        if (password.length < 6) {
+            alert("Password must be at least 6 characters long.");
+            event.preventDefault();
+            return;
+        }
 
-            if (!profilePicInput.files.length) {
-                alert("Please upload a profile picture.");
-                event.preventDefault(); // Stop form submission
-            }
-        });
+        if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            event.preventDefault();
+            return;
+        }
+
+        const profilePicInput = document.getElementById("profile-pic");
+
+        if (!profilePicInput.files.length) {
+            alert("Please upload a profile picture.");
+            event.preventDefault();
+        }
+    });
     </script>
 
     {% include "vehicle/footer.html" %}
