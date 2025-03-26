@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'vsms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'defaultdb',         # Database name
-        'USER': 'avnadmin',              # Database user
-        'PASSWORD': 'AVNS_9Emtjyop76IDJvGLonw',          # Database password
-        'HOST': 'mysql-260cd71d-appx102-0035.h.aivencloud.com',                  # Database host (default: localhost)
-        'PORT': '13360',
+        'NAME': 'vsms',         # Database name
+        'USER': 'root',              # Database user
+        'PASSWORD': 'password',          # Database password
+        'HOST': 'localhost',                  # Database host (default: localhost)
+        'PORT': '3306',
     }
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -51,7 +51,7 @@ class Request(models.Model):
         ('four wheeler', 'four wheeler')
     )
     category = models.CharField(max_length=50, choices=cat)
-    vehicle_no = models.PositiveIntegerField(null=False)
+    vehicle_no = models.CharField(max_length=20)  # Use CharField instead of IntegerField
     vehicle_name = models.CharField(max_length=40, null=False)
     vehicle_model = models.CharField(max_length=40, null=False)
     vehicle_brand = models.CharField(max_length=40, null=False)

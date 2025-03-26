@@ -34,6 +34,11 @@ class MechanicSalaryForm(forms.Form):
 
 
 class RequestForm(forms.ModelForm):
+    category = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control", "readonly": "readonly"}),
+        initial="four wheeler"
+    )
+
     class Meta:
         model=models.Request
         fields=['category','vehicle_no','vehicle_name','vehicle_model','vehicle_brand','problem_description']
