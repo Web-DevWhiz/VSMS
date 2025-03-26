@@ -52,12 +52,13 @@
 
 
 						<li  class="dropdown-menu-item">
-							<a href="/logout" class="dropdown-menu-link">
-								<div>
-									<i class="fas fa-sign-out-alt"></i>
-								</div>
-								<span>Logout</span>
-							</a>
+							<form method="post" action="{% url 'logout' %}">
+								{% csrf_token %}
+								<button type="submit" class="dropdown-item">
+								  <i class="fas fa-sign-out-alt "></i>
+								  <span>Logout</span>
+								</button>
+							  </form>
 						</li>
 					</ul>
 				</div>
