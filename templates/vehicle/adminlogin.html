@@ -118,9 +118,11 @@
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
+                <label for="username">Username</label>
                 {% render_field form.username class="form-control" placeholder="Username" %}
             </div>
             <div class="mb-3">
+                <label for="password">Password</label>
                 {% render_field form.password class="form-control" placeholder="Password" %}
             </div>
             <button type="submit" class="btn btn-success w-100">

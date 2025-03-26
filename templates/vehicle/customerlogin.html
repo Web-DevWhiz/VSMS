@@ -115,7 +115,9 @@
         {% endif %}
         <form method="post">
             {% csrf_token %}
+            <label for="username">Username</label>
             {% render_field form.username class="form-control" placeholder="Username" %}
+            <label for="password">Password</label>
             {% render_field form.password class="form-control" placeholder="Password" %}
             <button type="submit">Login</button>
         </form>
